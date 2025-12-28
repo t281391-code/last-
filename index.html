@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uTask - Task Management Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light-theme">
+    <div class="container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo">uTask</h1> 
+            </div>
+            
+            <button class="create-task-btn" id="createTaskBtn" data-i18n="createTask">
+                <i class="fas fa-plus"></i>
+                <span>Create new task</span>
+            </button>
+            
+            <nav class="nav-menu">
+                <a href="#" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span data-i18n="dashboard">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span data-i18n="analytics">Analytics</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-list"></i>
+                    <span data-i18n="taskList">Task List</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span data-i18n="setting">Setting</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-calendar"></i>
+                    <span data-i18n="calendar">Calendar</span>
+                </a>
+            </nav>
+            
+            <div class="logout-section">
+                <button class="logout-btn" id="logoutBtn" data-i18n="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Log out</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h2 class="greeting" data-i18n="greeting">Welcome to task management</h2>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search..." data-i18n-placeholder="search">
+                    </div>
+                    <div class="data-actions">
+                        <label for="importFile" class="import-btn" title="Import from JSON">
+                            <i class="fas fa-upload"></i>
+                            <input type="file" id="importFile" accept=".json" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Dashboard Page -->
+            <div class="page-container" id="dashboardPage">
+                <div class="kanban-board">
+                    <!-- TO DO Column -->
+                    <div class="kanban-column" data-status="todo">
+                        <div class="kanban-column-header todo-header">
+                            <div class="kanban-header-content">
+                                <i class="fas fa-circle todo-icon"></i>
+                                <h3>TO DO</h3>
+                                <span class="kanban-count" id="todoCount">0</span>
+                            </div>
+                        </div>
+                        <div class="kanban-tasks" id="todoTasks">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                        <button class="kanban-add-btn todo-add-btn" data-status="todo">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    
+                    <!-- IN PROGRESS Column -->
+                    <div class="kanban-column" data-status="inprogress">
+                        <div class="kanban-column-header inprogress-header">
+                            <div class="kanban-header-content">
+                                <i class="fas fa-circle"></i>
+                                <h3>IN PROGRESS</h3>
+                                <span class="kanban-count" id="inprogressCount">0</span>
+                            </div>
+                        </div>
+                        <div class="kanban-tasks" id="inprogressTasks">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                        <button class="kanban-add-btn inprogress-add-btn" data-status="inprogress">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    
+                    <!-- COMPLETE Column -->
+                    <div class="kanban-column" data-status="complete">
+                        <div class="kanban-column-header complete-header">
+                            <div class="kanban-header-content">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>COMPLETE</h3>
+                                <span class="kanban-count" id="completeCount">0</span>
+                            </div>
+                        </div>
+                        <div class="kanban-tasks" id="completeTasks">
+                            <!-- Tasks will be rendered here -->
+                        </div>
+                        <button class="kanban-add-btn complete-add-btn" data-status="complete">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Task List Page -->
+            <div class="page-container" id="taskListPage" style="display: none;">
+                <div class="tasks-list-card" style="width: 100%; max-width: 100%;">
+                    <div class="tasks-list-header">
+                        <h3 data-i18n="taskList">Task List</h3>
+                        <span class="tasks-count" id="taskListCount">0</span>
+                    </div>
+                    <div class="tasks-list" id="taskListContainer">
+                        <!-- Task list will be rendered here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Page -->
+            <div class="page-container" id="analyticsPage" style="display: none;">
+                <div class="dashboard-grid">
+                    <!-- Task Progress -->
+                    <div class="task-progress-card">
+                        <h3 data-i18n="taskProgress">Task Progress</h3>
+                        <div class="progress-circle-container">
+                            <svg class="progress-circle" viewBox="0 0 100 100">
+                                <circle class="progress-bg" cx="50" cy="50" r="45"></circle>
+                                <circle class="progress-bar" id="progressBar" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283"></circle>
+                            </svg>
+                        <div class="progress-text">
+                            <span class="progress-percent" id="progressPercent">0%</span>
+                            <span class="progress-label" data-i18n="successfulTask">Successful Task</span>
+                        </div>
+                        </div>
+                        <div class="progress-stats">
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="taskPassed">Task passed</span>
+                                <span class="stat-value" id="taskPassedCount">0</span>
+                            </div>
+                            <div class="progress-stat">
+                                <span class="stat-label" data-i18n="taskNotPassed">Task not passed</span>
+                                <span class="stat-value" id="taskNotPassedCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Activity Graph -->
+                    <div class="activity-card">
+                        <h3 data-i18n="activity">Activity</h3>
+                        <div class="activity-chart">
+                            <!-- Value Selection Modal -->
+                            <div class="activity-value-modal" id="activityValueModal" style="display: none;">
+                                <div class="activity-value-content">
+                                    <h4 id="activityModalTitle" data-i18n="evaluateYourself">Evaluate yourself</h4>
+                                    <div class="activity-value-buttons">
+                                        <button class="activity-value-btn" data-value="1">1</button>
+                                        <button class="activity-value-btn" data-value="2">2</button>
+                                        <button class="activity-value-btn" data-value="3">3</button>
+                                        <button class="activity-value-btn" data-value="4">4</button>
+                                        <button class="activity-value-btn" data-value="5">5</button>
+                                    </div>
+                                    <button class="activity-value-close" id="activityValueClose">×</button>
+                                </div>
+                            </div>
+                            <div class="chart-bars">
+                                <div class="chart-bar" data-day="mon" style="height: 0%">
+                                    <span class="bar-label">Mon</span>
+                                </div>
+                                <div class="chart-bar" data-day="tue" style="height: 0%">
+                                    <span class="bar-label">Tue</span>
+                                </div>
+                                <div class="chart-bar" data-day="wed" style="height: 0%">
+                                    <span class="bar-label">Wed</span>
+                                </div>
+                                <div class="chart-bar" data-day="thu" style="height: 0%">
+                                    <span class="bar-label">Thu</span>
+                                </div>
+                                <div class="chart-bar" data-day="fri" style="height: 0%">
+                                    <span class="bar-label">Fri</span>
+                                </div>
+                                <div class="chart-bar" data-day="sat" style="height: 0%">
+                                    <span class="bar-label">Sat</span>
+                                </div>
+                                <div class="chart-bar" data-day="sun" style="height: 0%">
+                                    <span class="bar-label">Sun</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Illustration -->
+                    <div class="illustration-card">
+                        <div class="illustration">
+                            <div class="illustration-figure">
+                                <div class="figure-head"></div>
+                                <div class="figure-body"></div>
+                                <div class="figure-desk"></div>
+                                <div class="floating-note note-1"></div>
+                                <div class="floating-note note-2"></div>
+                                <div class="floating-note note-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            
+            <!-- Settings Page -->
+            <div class="page-container" id="settingsPage" style="display: none;">
+                <div class="settings-card">
+                    <h2 data-i18n="setting">Setting</h2>
+                    
+                    <div class="settings-section">
+                        <h3 data-i18n="language">Language</h3>
+                        <div class="language-toggle">
+                            <button class="lang-btn active" data-lang="en" id="langEn">English</button>
+                            <button class="lang-btn" data-lang="mn" id="langMn">Монгол</button>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3 data-i18n="theme">Theme</h3>
+                        <button class="theme-toggle" id="themeToggle">
+                            <i class="fas fa-moon"></i>
+                            <span data-i18n="darkMode">Dark Mode</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Calendar Page -->
+            <div class="page-container" id="calendarPage" style="display: none;">
+                <div class="calendar-full-card">
+                    <div class="calendar-full-header">
+                        <h2 data-i18n="calendar">Calendar</h2>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" id="prevMonth">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="calendar-month-year" id="calendarMonthYear"></span>
+                            <button class="calendar-nav-btn" id="nextMonth">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="calendar-full-wrapper">
+                        <div class="calendar-full-weekdays">
+                            <div class="weekday-full" data-i18n="sun">Sun</div>
+                            <div class="weekday-full" data-i18n="mon">Mon</div>
+                            <div class="weekday-full" data-i18n="tue">Tue</div>
+                            <div class="weekday-full" data-i18n="wed">Wed</div>
+                            <div class="weekday-full" data-i18n="thu">Thu</div>
+                            <div class="weekday-full" data-i18n="fri">Fri</div>
+                            <div class="weekday-full" data-i18n="sat">Sat</div>
+                        </div>
+                        <div class="calendar-full-dates" id="calendarFullDates">
+                            <!-- Calendar dates will be generated dynamically -->
+                        </div>
+                    </div>
+                    <div class="calendar-notes-section" id="calendarNotesSection" style="display: none;">
+                        <h3 id="selectedDateTitle"></h3>
+                        <div class="calendar-notes-list" id="calendarNotesList">
+                            <!-- Notes for selected date will appear here -->
+                        </div>
+                        <button class="add-note-btn" id="addNoteBtn">
+                            <i class="fas fa-plus"></i>
+                            <span data-i18n="addNote">Add Note</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Right Sidebar -->
+        <aside class="right-sidebar">
+            <div class="profile-section">
+                <h3 data-i18n="myProfile">My profile</h3>
+                <div class="profile-card">
+                    <div class="profile-avatar">
+                        <img src="img/Screenshot 2025-12-27 183914.png" alt="Profile" class="profile-image">
+                    </div>
+                    <div class="profile-info">
+                        <h4>Нарангоо</h4>
+                        <p data-i18n="projectManager">Profile</p>
+                    </div>
+                    <button class="view-all-btn" data-i18n="viewAll">View all</button>
+                </div>
+            </div>
+            
+            <div class="tasks-calendar-section">
+                <h3 data-i18n="myTasks">My Tasks</h3>
+                <div class="calendar-header">
+                    <span id="sidebarCalendarHeader">August, Monday</span>
+                </div>
+                <div class="calendar-wrapper">
+                    <div class="calendar-weekdays">
+                        <div class="weekday" data-i18n="mon">Mon</div>
+                        <div class="weekday" data-i18n="tue">Tue</div>
+                        <div class="weekday" data-i18n="wed">Wed</div>
+                        <div class="weekday" data-i18n="thu">Thu</div>
+                        <div class="weekday" data-i18n="fri">Fri</div>
+                        <div class="weekday" data-i18n="sat">Sat</div>
+                        <div class="weekday" data-i18n="sun">Sun</div>
+                    </div>
+                    <div class="calendar-dates" id="sidebarCalendarDates">
+                        <!-- Calendar dates will be generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Create Task Modal -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 data-i18n="createNewTask">Create New Task</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="taskForm" class="task-form">
+                <div class="form-group">
+                    <label data-i18n="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" name="taskTitle" required placeholder="Enter task title">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="taskDescription">Description</label>
+                    <textarea id="taskDescription" name="taskDescription" rows="4" placeholder="Enter task description"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="dueDate">Due Date</label>
+                        <input type="date" id="dueDate" name="dueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="priority">Priority</label>
+                        <select id="priority" name="priority" required>
+                            <option value="low" data-i18n="low">Low</option>
+                            <option value="medium" data-i18n="medium">Medium</option>
+                            <option value="high" data-i18n="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="work" data-i18n="work">Work</option>
+                        <option value="personal" data-i18n="personal">Personal</option>
+                        <option value="urgent" data-i18n="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-submit" data-i18n="createTask">Create Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Calendar Note Modal -->
+    <div class="modal-overlay" id="calendarNoteModal">
+        <div class="modal-content">
+            <span class="close-button" id="closeCalendarNoteModal">&times;</span>
+            <h2 data-i18n="addNote">Add Note</h2>
+            <form id="calendarNoteForm">
+                <div class="form-group">
+                    <label for="noteText" data-i18n="noteText">Note Text</label>
+                    <textarea id="noteText" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="noteTime" data-i18n="noteTime">Time</label>
+                    <input type="time" id="noteTime" value="09:00" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelCalendarNoteBtn" class="btn-secondary" data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Profile Image Modal -->
+    <div class="modal-overlay profile-image-modal" id="profileImageModal">
+        <div class="modal-content profile-image-content">
+            <span class="close-button" id="closeProfileImageModal">&times;</span>
+            <img src="img/285110475_783982719264222_3313497294481960302_n.jpg" alt="Profile" class="profile-modal-image">
+            <p class="profile-modal-text">Төсөлийн гишүүн</p>
+        </div>
+    </div>
+    
+    <script src="language.js"></script>
+    <script src="theme.js"></script>
+    <script src="api.js"></script>
+    <script src="state.js"></script>
+    <script src="taskService.js"></script>
+    <script src="1.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,21 @@
+{
+  "name": "utask-dashboard",
+  "version": "1.0.0",
+  "description": "Task Management Dashboard with State Management and CRUD operations",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'No build step required for static site'"
+  },
+  "keywords": [
+    "task-management",
+    "dashboard",
+    "crud",
+    "state-management"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
+
